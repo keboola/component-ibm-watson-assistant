@@ -48,7 +48,8 @@ pipelines:
           script:
             - export APP_IMAGE=keboola-component
             - docker build . --tag=$APP_IMAGE
-            - docker images- docker run $APP_IMAGE flake8 /code/ --config=/code/flake8.cfg
+            - docker images
+            - docker run $APP_IMAGE flake8 /code/ --config=/code/flake8.cfg
             - echo "Running unit-tests..."
             - docker run $APP_IMAGE python -m unittest discover
             - echo "Preparing KBC test image"
