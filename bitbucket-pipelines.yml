@@ -10,7 +10,8 @@ pipelines:
           - export APP_IMAGE=keboola-component
           - docker build . --tag=$APP_IMAGE
           - docker images
-          - docker -v- docker run $APP_IMAGE flake8 /code/ --config=/code/flake8.cfg
+          - docker -v
+          - docker run $APP_IMAGE flake8 /code/ --config=/code/flake8.cfg
           - echo "Running unit-tests..."
           - docker run $APP_IMAGE python -m unittest discover# push test image to ecr - uncomment for testing before deployment
           - echo 'Pushing test image to repo. [tag=test]'
@@ -29,7 +30,8 @@ pipelines:
             - export APP_IMAGE=keboola-component
             - docker build . --tag=$APP_IMAGE
             - docker images
-            - docker -v- docker run $APP_IMAGE flake8 /code/ --config=/code/flake8.cfg
+            - docker -v
+            - docker run $APP_IMAGE flake8 /code/ --config=/code/flake8.cfg
             - echo "Running unit-tests..."
             - docker run $APP_IMAGE python -m unittest discover# push test image to ecr - uncomment for testing before deployment
             - echo 'Pushing test image to repo. [tag=test]'

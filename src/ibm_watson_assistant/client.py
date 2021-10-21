@@ -42,7 +42,7 @@ class WatsonAssistantClient:
 
     def get_skill(self):
         body = self.cloud_client.get_object(Bucket=self.s3_bucket,
-                                            Key='skills_setup_intern_chitchat.xlsx')['Body']
+                                            Key=self.s3_skill_object)['Body']
         WA_skills = pd.read_excel(io.BytesIO(body.read()))
         skill_ID = WA_skills.iloc[0, 1]
         return skill_ID
