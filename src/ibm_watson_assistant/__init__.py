@@ -1,1 +1,1 @@
-from .client import WatsonAssistantClient  # noqa
+from .client import WatsonAssistantClient, ClientApiException  # noqa
