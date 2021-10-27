@@ -34,6 +34,7 @@ class Component(ComponentBase):
 
         with open(out_file.full_path, 'w') as fp:
             json.dump(workspace_data, fp)
+        self.write_manifest(out_file)
 
     def get_workspace_data(self, workspace_id):
         try:
