@@ -1,6 +1,5 @@
 import logging
 import json
-import random
 from typing import Dict
 from ibm_watson_assistant import WatsonAssistantClient, ClientApiException
 
