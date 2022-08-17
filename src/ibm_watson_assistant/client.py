@@ -26,3 +26,10 @@ class WatsonAssistantClient:
         except ApiException as api_exc:
             raise ClientApiException(api_exc) from api_exc
         return response
+
+    def get_all_logs(self, filters, cursor=None):
+        try:
+            response = self.client.list_all_logs(filter=filters, cursor=cursor).get_result()
+        except ApiException as api_exc:
+            raise ClientApiException(api_exc) from api_exc
+        return response
