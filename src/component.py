@@ -36,12 +36,12 @@ class Component(ComponentBase):
 
         if mode == "workspace":
             self.get_and_write_workspaces(workspace_id)
-        elif mode == "list_logs":
+        elif mode == "list_all_logs":
             list_logs_filter = params.get(KEY_LIST_LOGS_FILTER, "")
             list_logs_file_name = params.get(KEY_LOG_FILE_NAME, "logs.json")
             self.get_and_save_all_logs(list_logs_filter, list_logs_file_name)
         else:
-            raise UserException(f"Mode {mode} is not a valid mode. Use either 'workspace' or 'list_logs'")
+            raise UserException(f"Mode {mode} is not a valid mode. Use either 'workspace' or 'list_all_logs'")
 
     def get_workspace_data(self, workspace_id: str):
         try:
@@ -63,7 +63,7 @@ class Component(ComponentBase):
             logs = logs_response.get("logs")
             self.write_logs_to_file(out_file, logs, first_page)
             cursor = logs_response.get("pagination", {}).get("next_cursor")
-            if not cursor and random.randint(2, 6) == 5:
+            if not cursor:
                 last_page = True
             first_page = False
 
@@ -94,7 +94,7 @@ class Component(ComponentBase):
         try:
             return self.watson_client.get_all_logs(filters, cursor=cursor)
         except ClientApiException as client_exc:
-            raise UserException(client_exc) from client_exc
+            raise UserException(f"{client_exc}. Make sure your filters are setup correctly") from client_exc
 
     def get_and_write_workspaces(self, workspace_id):
         workspace_data = self.get_workspace_data(workspace_id)
