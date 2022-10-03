@@ -93,7 +93,8 @@ class Component(ComponentBase):
         try:
             return self.watson_client.get_all_logs(filters, cursor=cursor)
         except ClientApiException as client_exc:
-            raise UserException(f"{client_exc}. Make sure your filters are setup correctly") from client_exc
+            raise UserException(f"{client_exc}. Check the validity of your API token, your version, and "
+                                f"make sure your filters are setup correctly") from client_exc
 
     def get_and_write_workspaces(self, workspace_id):
         workspace_data = self.get_workspace_data(workspace_id)
