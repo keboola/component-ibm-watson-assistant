@@ -26,11 +26,9 @@ This extractor refers to **Skills** as **Workspaces** as this is how they are re
 Or
 ```json
 {
-  "parameters": {
     "#api_key": "API_KEY_HERE",
     "version": "2019-02-28",
     "mode" : "list_all_logs",
     "list_logs_filter" : "language::en,workspace_id::ID_OF_WORKSPACE_HERE"
-  }
 }
 ```
