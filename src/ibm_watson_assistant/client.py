@@ -1,3 +1,4 @@
+from retry import retry
 from ibm_watson import AssistantV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_cloud_sdk_core.api_exception import ApiException
@@ -20,6 +21,7 @@ class WatsonAssistantClient:
         self.client = AssistantV1(version=self.watson_version, authenticator=IAMAuthenticator(self.api_key))
         self.client.set_service_url(WATSON_ENDPOINT)
 
+    @retry(tries=5)
     def get_workspace(self, workspace_id):
         try:
             response = self.client.get_workspace(workspace_id=workspace_id, export=True).get_result()
@@ -27,6 +29,7 @@ class WatsonAssistantClient:
             raise ClientApiException(api_exc) from api_exc
         return response
 
+    @retry(tries=5)
     def get_all_logs(self, filters, cursor=None):
         try:
             response = self.client.list_all_logs(filter=filters, cursor=cursor).get_result()
