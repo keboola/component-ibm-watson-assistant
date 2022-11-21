@@ -6,7 +6,6 @@ import time
 
 from keboola.component.base import ComponentBase
 from keboola.component.exceptions import UserException
-from ibm_cloud_sdk_core.api_exception import ApiException
 
 KEY_WORKSPACE_ID = "workspace_id"
 KEY_API_KEY = "#api_key"
