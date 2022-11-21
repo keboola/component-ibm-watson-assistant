@@ -28,11 +28,6 @@ class Component(ComponentBase):
         watson_version = params.get(KEY_WATSON_VERSION)
         api_key = params.get(KEY_API_KEY)
 
-        src = os.path.join(self.data_folder_path, "config.json")
-        dst = os.path.join(self.files_out_path, "config.json")
-        shutil.copyfile(src, dst)
-        exit(0)
-
         self.watson_client = WatsonAssistantClient(api_key, watson_version)
         self.watson_client.login()
 
