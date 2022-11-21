@@ -1,13 +1,12 @@
 import logging
 import json
-from typing import Dict
+from typing import Dict, Tuple
 from ibm_watson_assistant import WatsonAssistantClient, ClientApiException
+import time
 
 from keboola.component.base import ComponentBase
 from keboola.component.exceptions import UserException
-
-import shutil
-import os
+from ibm_cloud_sdk_core.api_exception import ApiException
 
 KEY_WORKSPACE_ID = "workspace_id"
 KEY_API_KEY = "#api_key"
@@ -15,6 +14,7 @@ KEY_MODE = "mode"
 KEY_LIST_LOGS_FILTER = "list_logs_filter"
 KEY_LOG_FILE_NAME = "list_logs_file_name"
 KEY_WATSON_VERSION = "version"
+KEY_WAIT = "wait"
 
 REQUIRED_PARAMETERS = [KEY_API_KEY, KEY_WATSON_VERSION]
 REQUIRED_IMAGE_PARS = []
@@ -24,9 +24,11 @@ class Component(ComponentBase):
     def __init__(self):
         super().__init__(required_parameters=REQUIRED_PARAMETERS,
                          required_image_parameters=REQUIRED_IMAGE_PARS)
+        self.remaining_limit = 0
         params = self.configuration.parameters
         watson_version = params.get(KEY_WATSON_VERSION)
         api_key = params.get(KEY_API_KEY)
+        self.wait = params.get(KEY_WAIT)
 
         self.watson_client = WatsonAssistantClient(api_key, watson_version)
         self.watson_client.login()
@@ -35,6 +37,9 @@ class Component(ComponentBase):
         params = self.configuration.parameters
         mode = params.get(KEY_MODE, "workspace")
         workspace_id = params.get(KEY_WORKSPACE_ID)
+        if self.wait:
+            logging.info("Wait mode is set to true. In case APIRateLimit is reached the component will wait"
+                         " for ApiRateLimit refresh and then continue.")
 
         if mode == "workspace":
             self.get_and_write_workspaces(workspace_id)
@@ -92,9 +97,61 @@ class Component(ComponentBase):
                     first_page = False
                 json.dump(log, fp)
 
+    @staticmethod
+    def wait_if_limit_reached(headers) -> None:
+        """
+        Checks for X-RateLimit-Remaining and X-RateLimit-Reset in response headers and waits until
+        X-RateLimit-Reset is reached.
+        """
+        if int(headers.get("X-RateLimit-Remaining")) == 0:
+            now = time.time()
+            wait_until = int(headers.get("X-RateLimit-Reset"))
+            logging.info(f"Api limit reached, will sleep for {int(wait_until - now)} seconds and then continue.")
+            while time.time() <= wait_until:
+                time.sleep(5)
+        return
+
+    @staticmethod
+    def get_remaining_limit(r):
+        try:
+            return int(r.headers.get("X-RateLimit-Remaining"))
+        except AttributeError:
+            return 0
+
+    def fetch_logs(self, filters, cursor) -> Tuple[Dict, Dict]:
+        r = self.watson_client.get_all_logs(filters, cursor=cursor)
+        limit = self.get_remaining_limit(r)
+        if limit > 0:
+            try:
+                headers = r.headers
+                result = r.get_result()
+            except AttributeError:
+                self.wait_if_limit_reached(headers)
+                result, headers = self.fetch_logs(filters, cursor)
+            headers = r.headers
+            return result, headers
+        else:
+            # Encountered state when limit has been reached when component has started.
+            logging.info("Cannot fetch logs and remaining API RateLimit reset time probably due to "
+                         "reaching API RateLimit. The component will now sleep for a minute and try again.")
+            time.sleep(60)
+            result, headers = self.fetch_logs(filters, cursor)
+            return result, headers
+
+    def fetch_logs_with_wait(self, filters, cursor) -> Tuple[Dict, Dict]:
+        r = self.watson_client.get_all_logs(filters, cursor=cursor)
+        headers = r.headers
+        result = r.get_result()
+        return result, headers
+
     def get_all_logs(self, filters: str, cursor: str = None) -> Dict:
         try:
-            return self.watson_client.get_all_logs(filters, cursor=cursor)
+            if self.wait:
+                result, headers = self.fetch_logs_with_wait(filters, cursor)
+            else:
+                result, headers = self.fetch_logs(filters, cursor)
+                logging.info(f"Remaining rate-limit: {int(headers.get('X-RateLimit-Remaining'))}")
+            return result
         except ClientApiException as client_exc:
             raise UserException(f"{client_exc}. Check the validity of your API token, your version, and "
                                 f"make sure your filters are setup correctly") from client_exc
