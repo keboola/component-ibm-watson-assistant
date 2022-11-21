@@ -6,6 +6,9 @@ from ibm_watson_assistant import WatsonAssistantClient, ClientApiException
 from keboola.component.base import ComponentBase
 from keboola.component.exceptions import UserException
 
+import shutil
+import os
+
 KEY_WORKSPACE_ID = "workspace_id"
 KEY_API_KEY = "#api_key"
 KEY_MODE = "mode"
@@ -24,6 +27,11 @@ class Component(ComponentBase):
         params = self.configuration.parameters
         watson_version = params.get(KEY_WATSON_VERSION)
         api_key = params.get(KEY_API_KEY)
+
+        src = os.path.join(self.data_folder_path, "config.json")
+        dst = os.path.join(self.files_out_path, "config.json")
+        shutil.copyfile(src, dst)
+        exit(0)
 
         self.watson_client = WatsonAssistantClient(api_key, watson_version)
         self.watson_client.login()
