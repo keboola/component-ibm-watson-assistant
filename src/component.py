@@ -126,7 +126,7 @@ class Component(ComponentBase):
                 result = r.get_result()
             except AttributeError:
                 self.wait_if_limit_reached(headers)
-                result, headers = self.fetch_logs(filters, cursor)
+                result, headers = self.fetch_logs_with_wait(filters, cursor)
             headers = r.headers
             return result, headers
         else:
@@ -134,7 +134,7 @@ class Component(ComponentBase):
             logging.info("Cannot fetch logs and remaining API RateLimit reset time probably due to "
                          "reaching API RateLimit. The component will now sleep for a minute and try again.")
             time.sleep(60)
-            result, headers = self.fetch_logs(filters, cursor)
+            result, headers = self.fetch_logs_with_wait(filters, cursor)
             return result, headers
 
     def fetch_logs(self, filters, cursor) -> Tuple[Dict, Dict]:
