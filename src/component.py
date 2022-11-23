@@ -117,7 +117,7 @@ class Component(ComponentBase):
         except AttributeError:
             return 0
 
-    def fetch_logs(self, filters, cursor) -> Tuple[Dict, Dict]:
+    def fetch_logs_with_wait(self, filters, cursor) -> Tuple[Dict, Dict]:
         r = self.watson_client.get_all_logs(filters, cursor=cursor)
         limit = self.get_remaining_limit(r)
         if limit > 0:
@@ -137,7 +137,7 @@ class Component(ComponentBase):
             result, headers = self.fetch_logs(filters, cursor)
             return result, headers
 
-    def fetch_logs_with_wait(self, filters, cursor) -> Tuple[Dict, Dict]:
+    def fetch_logs(self, filters, cursor) -> Tuple[Dict, Dict]:
         r = self.watson_client.get_all_logs(filters, cursor=cursor)
         headers = r.headers
         result = r.get_result()
