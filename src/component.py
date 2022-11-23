@@ -149,7 +149,7 @@ class Component(ComponentBase):
                 result, headers = self.fetch_logs_with_wait(filters, cursor)
             else:
                 result, headers = self.fetch_logs(filters, cursor)
-                logging.info(f"Remaining rate-limit: {int(headers.get('X-RateLimit-Remaining'))}")
+            logging.info(f"Remaining rate-limit: {int(headers.get('X-RateLimit-Remaining'))}")
             return result
         except ClientApiException as client_exc:
             raise UserException(f"{client_exc}. Check the validity of your API token, your version, and "
