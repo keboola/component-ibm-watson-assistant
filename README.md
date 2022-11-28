@@ -47,11 +47,6 @@ version
 -------
 version of the API you wish to use
 
-wait
-----
-If set to true, Component will wait for API [rate limit](https://cloud.ibm.com/apidocs/assistant-v1#rate-limiting)
-to refresh and then continue fetching data.
-This parameter is optional and if set to false or omitted, the component will end with UserException when ratelimit is reached.
 
 Sample Configuration
 =============
@@ -60,8 +55,7 @@ Sample Configuration
   "parameters": {
     "workspace_id": "ID_OF_WORKSPACE_HERE",
     "#api_key": "API_KEY_HERE",
-    "version": "2019-02-28",
-    "wait": true
+    "version": "2019-02-28"
   }
 }
 ```

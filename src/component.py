@@ -1,8 +1,7 @@
 import logging
 import json
-from typing import Dict, Tuple
+from typing import Dict
 from ibm_watson_assistant import WatsonAssistantClient, ClientApiException
-import time
 
 from keboola.component.base import ComponentBase
 from keboola.component.exceptions import UserException
@@ -13,7 +12,6 @@ KEY_MODE = "mode"
 KEY_LIST_LOGS_FILTER = "list_logs_filter"
 KEY_LOG_FILE_NAME = "list_logs_file_name"
 KEY_WATSON_VERSION = "version"
-KEY_WAIT = 'wait'
 
 REQUIRED_PARAMETERS = [KEY_API_KEY, KEY_WATSON_VERSION]
 REQUIRED_IMAGE_PARS = []
