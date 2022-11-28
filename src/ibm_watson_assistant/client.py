@@ -22,7 +22,7 @@ class WatsonAssistantClient:
         self.client = AssistantV1(version=self.watson_version, authenticator=IAMAuthenticator(self.api_key))
         self.client.set_service_url(WATSON_ENDPOINT)
 
-    @retry(tries=5, delay=1, backoff=1)
+    @retry(tries=5, delay=1)
     def get_workspace(self, workspace_id):
         try:
             response = self.client.get_workspace(workspace_id=workspace_id, export=True).get_result()
