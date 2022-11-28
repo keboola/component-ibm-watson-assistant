@@ -47,7 +47,6 @@ version
 -------
 version of the API you wish to use
 
-
 Sample Configuration
 =============
 ```json
