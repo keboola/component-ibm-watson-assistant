@@ -21,7 +21,6 @@ class Component(ComponentBase):
     def __init__(self):
         super().__init__(required_parameters=REQUIRED_PARAMETERS,
                          required_image_parameters=REQUIRED_IMAGE_PARS)
-        self.remaining_limit = 0
         params = self.configuration.parameters
         watson_version = params.get(KEY_WATSON_VERSION)
         api_key = params.get(KEY_API_KEY)
