@@ -30,7 +30,7 @@ class WatsonAssistantClient:
             raise ClientApiException(api_exc) from api_exc
         return response
 
-    @retry(ApiException, tries=45, delay=60)
+    @retry(ApiException, tries=31, delay=60)
     def get_all_logs(self, filters, cursor=None):
         return self.client.list_all_logs(filter=filters, cursor=cursor)
 
