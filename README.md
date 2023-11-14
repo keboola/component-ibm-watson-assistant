@@ -29,7 +29,9 @@ Configuration
 
 mode
 -------
-either 'list_all_logs' or 'workspace'. If 'list_all_logs' is set then the parameter list_logs_filter must be set. If 'workspace' is set then workspace_id must be set
+The 'mode' parameter must be set to either 'list_all_logs' or 'workspace'.
+If 'list_all_logs' is selected, ensure that the 'list_logs_filter' parameter is also provided.
+For 'workspace' mode, the 'workspace_id' parameter must be set to retrieve workspace data. If 'workspace_id' is not provided, the [list workspaces](https://cloud.ibm.com/apidocs/assistant-v1?code=python#listworkspaces) action will be executed.
 
 list_logs_filter
 -------

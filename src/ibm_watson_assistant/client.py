@@ -36,3 +36,11 @@ class WatsonAssistantClient:
         except ApiException as api_exc:
             raise ClientApiException(api_exc) from api_exc
         return response
+
+    @retry(tries=5)
+    def list_workspaces(self):
+        try:
+            response = self.client.list_workspaces().get_result()
+        except ApiException as api_exc:
+            raise ClientApiException(api_exc) from api_exc
+        return response

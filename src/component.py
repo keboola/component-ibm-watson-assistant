@@ -34,7 +34,10 @@ class Component(ComponentBase):
         workspace_id = params.get(KEY_WORKSPACE_ID)
 
         if mode == "workspace":
-            self.get_and_write_workspaces(workspace_id)
+            if workspace_id:
+                self.get_and_write_workspaces(workspace_id)
+            else:
+                self.get_workspaces()
         elif mode == "list_all_logs":
             list_logs_filter = params.get(KEY_LIST_LOGS_FILTER, "")
             list_logs_file_name = params.get(KEY_LOG_FILE_NAME, "logs.json")
@@ -104,6 +107,19 @@ class Component(ComponentBase):
 
         with open(out_file.full_path, 'w') as fp:
             json.dump(workspace_data, fp)
+        self.write_manifest(out_file)
+
+    def get_workspaces(self):
+        try:
+            result = self.watson_client.list_workspaces()
+        except ClientApiException as client_exc:
+            raise UserException(client_exc) from client_exc
+
+        file_name = "workspaces.json"
+        out_file = self.create_out_file_definition(file_name, tags=["ibm_watson_assistant", "workspaces"])
+
+        with open(out_file.full_path, 'w') as fp:
+            json.dump(result, fp)
         self.write_manifest(out_file)
 
 
