@@ -37,7 +37,7 @@ class Component(ComponentBase):
             if workspace_id:
                 self.get_and_write_workspaces(workspace_id)
             else:
-                self.get_workspaces()
+                self.list_workspaces()
         elif mode == "list_all_logs":
             list_logs_filter = params.get(KEY_LIST_LOGS_FILTER, "")
             list_logs_file_name = params.get(KEY_LOG_FILE_NAME, "logs.json")
@@ -109,7 +109,7 @@ class Component(ComponentBase):
             json.dump(workspace_data, fp)
         self.write_manifest(out_file)
 
-    def get_workspaces(self):
+    def list_workspaces(self):
         try:
             result = self.watson_client.list_workspaces()
         except ClientApiException as client_exc:
