@@ -5,4 +5,4 @@ https://bitbucket.org/kds_consulting_team/keboola-python-util-lib/get/0.5.0.zip#
 mock
 freezegun
 retry
-ibm-watson==5.3.0
+ibm-watson==8.1.0

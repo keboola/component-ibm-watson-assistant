@@ -91,7 +91,7 @@ class Component(ComponentBase):
 
     def get_all_logs(self, filters: str, cursor: str = None) -> Dict:
         try:
-            result, headers = self.watson_client.fetch_logs(filters, cursor)
+            result, _ = self.watson_client.fetch_logs(filters, cursor)
             return result
         except ClientApiException as client_exc:
             raise UserException(f"{client_exc}. Check the validity of your API token, your version, and "
