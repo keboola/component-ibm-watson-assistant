@@ -2,7 +2,8 @@ from retry import retry
 from ibm_watson import AssistantV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_cloud_sdk_core.api_exception import ApiException
-from typing import Dict, Tuple
+import logging
+import time
 
 WATSON_ENDPOINT = 'https://api.eu-de.assistant.watson.cloud.ibm.com/'
 
@@ -34,8 +35,13 @@ class WatsonAssistantClient:
     def get_all_logs(self, filters, cursor=None):
         return self.client.list_all_logs(filter=filters, cursor=cursor)
 
-    def fetch_logs(self, filters, cursor) -> Tuple[Dict, Dict]:
+    def fetch_logs(self, filters, cursor) -> dict:
         r = self.get_all_logs(filters, cursor=cursor)
+
         headers = r.headers
-        result = r.get_result()
-        return result, headers
+        if headers.get('X-RateLimit-Remaining') == '0':
+            sleep_for = int(headers.get('X-RateLimit-Reset')) - time.time()
+            logging.info(f"Rate limit reached. Sleeping for {sleep_for} seconds")
+            time.sleep(sleep_for)
+
+        return r.get_result()
