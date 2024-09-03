@@ -35,7 +35,7 @@ class WatsonAssistantClient:
     def get_all_logs(self, filters, cursor=None):
         return self.client.list_all_logs(filter=filters, cursor=cursor)
 
-    def fetch_logs(self, filters, cursor) -> dict:
+    def fetch_logs(self, filters, cursor) -> (dict, dict):
         r = self.get_all_logs(filters, cursor=cursor)
 
         headers = r.headers
@@ -44,4 +44,4 @@ class WatsonAssistantClient:
             logging.info(f"Rate limit reached. Sleeping for {sleep_for} seconds")
             time.sleep(sleep_for)
 
-        return r.get_result()
+        return r.get_result(), headers
